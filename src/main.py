@@ -135,6 +135,7 @@ def main(page: ft.Page):
         page.update()
 
     def toggle_theme(e):
+
         if page.theme_mode == ft.ThemeMode.LIGHT:
             page.theme_mode = ft.ThemeMode.DARK
             update_styles(theme="dark")
@@ -144,6 +145,7 @@ def main(page: ft.Page):
         page.update()
 
     theme_button = ft.ElevatedButton(text="тема", on_click=toggle_theme, bgcolor="#bbb", color="black", width=80)
+
 
     button_grid = [
         [
