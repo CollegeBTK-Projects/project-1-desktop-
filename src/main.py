@@ -111,14 +111,14 @@ def main(page: ft.Page):
             all_values = ""
         page.update()
 
-     def toggle_theme(e):
-	if page.theme_mode == ft.ThemeMode.LIGHT:
-	    page.theme_mode = ft.ThemeMode.DARK
-	    update_styles(theme="dark")
-	else:
-	    page.theme_mode = ft.ThemeMode.LIGHT
-	    update_styles(theme="light")
-	page.update() 
+    def toggle_theme(e):
+	    if page.theme_mode == ft.ThemeMode.LIGHT:
+	        page.theme_mode = ft.ThemeMode.DARK
+	    	update_styles(theme="dark")
+		else:
+	    	page.theme_mode = ft.ThemeMode.LIGHT
+	    	update_styles(theme="light")
+		page.update() 
     
     
     result_text = ft.Text(value='0', size=28, color='white', text_align='right') 
