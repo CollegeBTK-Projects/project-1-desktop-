@@ -1,9 +1,10 @@
 import flet as ft
 
 def main(page: ft.Page):
-    page.title = "calculator"
+    page.title = "Сalculator"
     page.window.width = 350
     page.window.height = 550
+    page.window.alignment = ft.alignment.center
     page.vertical_alignment = ft.MainAxisAlignment.END
     page.window.resizable = False
 
