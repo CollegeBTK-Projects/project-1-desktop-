@@ -1,12 +1,17 @@
 import flet as ft
+import json
+import os
 
 def main(page: ft.Page):
+    
     page.title = "Сalculator"
     page.window.width = 350
-    page.window.height = 550
+    page.window.height = 570
     page.window.alignment = ft.alignment.center
     page.vertical_alignment = ft.MainAxisAlignment.END
     page.window.resizable = False
+    
+    
 
     light_theme = ft.Theme(
         color_scheme=ft.ColorScheme(
@@ -52,6 +57,35 @@ def main(page: ft.Page):
         height=70,
         alignment=ft.alignment.center_right,
     )
+    
+    
+    def export_click(e):
+        
+        data_to_export = {
+            "counter": result_text.value  
+        }
+        export_to_json(data_to_export)
+        print("Экспорт выполнен")
+    
+    def toggle_theme_menu(e):
+        toggle_theme(e)  
+        
+    page.appbar = ft.AppBar(
+        toolbar_height=40,
+        leading_width=40,
+        center_title=False,
+        bgcolor=ft.Colors.TRANSPARENT,
+        actions=[
+            ft.PopupMenuButton(
+                items=[
+                    ft.PopupMenuItem(text="Экспорт в JSON", on_click=export_click),
+                    ft.PopupMenuItem(text="Импорт из JSON"),
+                    ft.PopupMenuItem(text="Переключить тему", on_click=toggle_theme_menu), 
+                ]
+            ),
+        ],
+    )
+    
 
     number_style = {
         "height": 60,
@@ -76,7 +110,7 @@ def main(page: ft.Page):
             operator_style["color"] = "white"
             for row in buttons:
                 for btn in row.controls:
-                    if btn.text.lower() == "тема":
+                    if btn.text.lower() == "🌆":
                         btn.bgcolor = "#666"
                         btn.color = "white"
                     elif btn.text in ("C", "%", "/", "*", "-", "+", "=", ".", "R"):
@@ -95,7 +129,7 @@ def main(page: ft.Page):
             operator_style["color"] = "white"
             for row in buttons:
                 for btn in row.controls:
-                    if btn.text.lower() == "тема":
+                    if btn.text.lower() == "🌆":
                         btn.bgcolor = "#bbb"
                         btn.color = "black"
                     elif btn.text in ("C", "%", "/", "*", "-", "+", "=", ".", "R"):
@@ -134,6 +168,11 @@ def main(page: ft.Page):
             result_text.value = "Ошибка"
             all_values = ""
         page.update()
+    
+    def export_to_json(data, filename="export.json"):
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+    
 
     def toggle_theme(e):
 
@@ -145,7 +184,7 @@ def main(page: ft.Page):
             update_styles(theme="light")
         page.update()
 
-    theme_button = ft.ElevatedButton(text="тема", on_click=toggle_theme, bgcolor="#bbb", color="black", width=80)
+    theme_button = ft.ElevatedButton(text="🌆", on_click=toggle_theme, bgcolor="#bbb", color="black", width=40, visible=False)
 
 
     button_grid = [
@@ -204,10 +243,9 @@ def main(page: ft.Page):
                 ft.Column(buttons, spacing=5),
             ],
             spacing=15,
-            expand=True,
         )
     )
-
+    
     update_styles(theme="light")
     page.update()
 
