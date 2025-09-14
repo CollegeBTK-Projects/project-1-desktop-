@@ -62,7 +62,8 @@ def main(page: ft.Page):
     )
     
     status_text = ft.Text("")
-    
+
+
     def export_click(e):
         data_to_export = {
             "counter": result_text.value
@@ -102,10 +103,35 @@ def main(page: ft.Page):
         file_picker = ft.FilePicker(on_result=on_file_pick)
         page.overlay.append(file_picker)
         page.update()
-        file_picker.pick_files(allow_multiple=False)
-    
+        file_picker.pick_files(allow_multiple=False) 
+
+    def new_window(e):
+        dlg = ft.AlertDialog(
+        title=ft.Text("О программе"),
+        content=ft.Text(''' Авторы: 
+        Мишкевич Максим
+        Дема Илья
+        Семенюк Михаил
+ Версия программы: 
+        NMSS 3.2.2 '''),
+        actions=[
+            ft.TextButton("Закрыть", on_click=close_dialog)
+        ],
+        modal=True,
+    )
+        page.dialog = dlg
+        page.overlay.append(dlg)
+        dlg.open = True
+        page.update()
+
+    def close_dialog(e):
+        page.dialog.open = False
+        page.update()
+
+
+
     def toggle_theme_menu(e):
-        toggle_theme(e)  
+        toggle_theme(e) 
         
     page.appbar = ft.AppBar(
         toolbar_height=40,
@@ -115,6 +141,7 @@ def main(page: ft.Page):
         actions=[
             ft.PopupMenuButton(
                 items=[
+                    ft.PopupMenuItem(text="О программе", on_click=new_window),
                     ft.PopupMenuItem(text="Экспорт в JSON", on_click=export_click),
                     ft.PopupMenuItem(text="Импорт из JSON", on_click=import_click),
                     ft.PopupMenuItem(text="Переключить тему", on_click=toggle_theme_menu), 
@@ -287,3 +314,4 @@ def main(page: ft.Page):
     page.update()
 
 ft.app(target=main)
+
