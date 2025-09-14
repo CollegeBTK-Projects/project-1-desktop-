@@ -1,12 +1,15 @@
 import flet as ft
+from flet import FilePicker, FilePickerResultEvent
 import json
-import os
+import time 
+import threading
 
 def main(page: ft.Page):
     
+    
     page.title = "Сalculator"
     page.window.width = 350
-    page.window.height = 570
+    page.window.height = 600
     page.window.alignment = ft.alignment.center
     page.vertical_alignment = ft.MainAxisAlignment.END
     page.window.resizable = False
@@ -58,14 +61,48 @@ def main(page: ft.Page):
         alignment=ft.alignment.center_right,
     )
     
+    status_text = ft.Text("")
     
     def export_click(e):
-        
         data_to_export = {
-            "counter": result_text.value  
+            "counter": result_text.value
         }
-        export_to_json(data_to_export)
-        print("Экспорт выполнен")
+        try:
+            with open("data.json", "w", encoding="utf-8") as json_file: 
+                json.dump(data_to_export, json_file, ensure_ascii=False, indent=4)
+            result_text.value = "Сохранено в data.json"
+            result_text.text_align = ft.TextAlign.LEFT
+            page.update()
+            def clear_status():
+                time.sleep(2)
+                result_text.value = ""
+                page.update()
+
+            threading.Thread(target=clear_status).start()
+            print("Экспорт выполнен")  
+        except Exception as ex:
+            print("Ошибка при экспорте:", ex)
+        
+        
+    page.update()
+        
+    def import_click(e): 
+        def on_file_pick(e: FilePickerResultEvent):
+            if e.files:
+                file_path = e.files[0].path
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                result_text.value = data.get("counter", "")  
+                page.update()
+                print("Импорт выполнен")
+            except Exception as ex:
+                print("Ошибка при импорте:", ex)
+                
+        file_picker = ft.FilePicker(on_result=on_file_pick)
+        page.overlay.append(file_picker)
+        page.update()
+        file_picker.pick_files(allow_multiple=False)
     
     def toggle_theme_menu(e):
         toggle_theme(e)  
@@ -79,7 +116,7 @@ def main(page: ft.Page):
             ft.PopupMenuButton(
                 items=[
                     ft.PopupMenuItem(text="Экспорт в JSON", on_click=export_click),
-                    ft.PopupMenuItem(text="Импорт из JSON"),
+                    ft.PopupMenuItem(text="Импорт из JSON", on_click=import_click),
                     ft.PopupMenuItem(text="Переключить тему", on_click=toggle_theme_menu), 
                 ]
             ),
