@@ -1,5 +1,5 @@
-def calculate(expression: str) -> str:
+def calculate(expr: str) -> str:
     try:
-		return str(eval(expression))
-    except Exception:
-		return "Ошибка"
+        return str(eval(expr))
+    except:
+        return "Ошибка"
