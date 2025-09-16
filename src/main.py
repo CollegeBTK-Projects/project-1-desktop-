@@ -3,16 +3,19 @@ from flet import FilePicker, FilePickerResultEvent
 import json
 import time 
 import threading
+import unittest
+import io
+from calculator import calculate #логика
+from test_calculator import TestCalculator #из файла импортирует класс тестов
 
 def main(page: ft.Page):
     
-    
     page.title = "Сalculator"
-    page.window.width = 350
+    page.window.width = 750
     page.window.height = 600
     page.window.alignment = ft.alignment.center
     page.vertical_alignment = ft.MainAxisAlignment.END
-    page.window.resizable = False
+    #page.window.resizable = False
     
     
 
@@ -133,6 +136,27 @@ def main(page: ft.Page):
     def toggle_theme_menu(e):
         toggle_theme(e) 
         
+    def run_tests_and_get_output():
+        loader = unittest.TestLoader()
+        suite = loader.loadTestsFromTestCase(TestCalculator)
+        stream = io.StringIO()  # буфер в памяти для вывода
+        runner = unittest.TextTestRunner(stream=stream, verbosity=2)
+        runner.run(suite)
+        return stream.getvalue()
+
+    def show_test_results(e):
+        test_output = run_tests_and_get_output()
+        dlg = ft.AlertDialog(
+            title=ft.Text("Результаты Unit Test"),
+            content=ft.Text(test_output, selectable=True),
+            actions=[ft.TextButton("ОК", on_click=close_dialog)],
+            modal=True,
+        )
+        page.dialog = dlg
+        page.overlay.append(dlg)
+        dlg.open = True
+        page.update()
+        
     page.appbar = ft.AppBar(
         toolbar_height=40,
         leading_width=40,
@@ -144,7 +168,8 @@ def main(page: ft.Page):
                     ft.PopupMenuItem(text="О программе", on_click=new_window),
                     ft.PopupMenuItem(text="Экспорт в JSON", on_click=export_click),
                     ft.PopupMenuItem(text="Импорт из JSON", on_click=import_click),
-                    ft.PopupMenuItem(text="Переключить тему", on_click=toggle_theme_menu), 
+                    ft.PopupMenuItem(text="Переключить тему", on_click=toggle_theme_menu),
+		            ft.PopupMenuItem(text="Unit Test", on_click=show_test_results), 
                 ]
             ),
         ],
@@ -233,6 +258,7 @@ def main(page: ft.Page):
             all_values = ""
         page.update()
     
+
     def export_to_json(data, filename="export.json"):
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
@@ -314,4 +340,3 @@ def main(page: ft.Page):
     page.update()
 
 ft.app(target=main)
-
